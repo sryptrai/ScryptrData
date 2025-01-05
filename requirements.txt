@@ -1,5 +1,9 @@
-fastapi
-uvicorn
-beautifulsoup4
-pandas
-requests
+- FastAPI
+- Playwright
+- TextBlob
+- Hugging Face Transformers
+- Pandas
+- BeautifulSoup
+- SpaCy
+- Redis
+- MongoDB Driver (PyMongo)
