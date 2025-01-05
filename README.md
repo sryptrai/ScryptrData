@@ -45,7 +45,17 @@ Provides intelligent APIs that can be accessed by AI agents for real-time insigh
 - **Language Detection Endpoint**: Detect and return the language of input text.
 - **Entity Extraction Endpoint**: Extract named entities from text for deeper understanding.
 
-
+### 5. **`requirements.txt`**
+Lists the Python dependencies required to run the project, including:
+- FastAPI
+- Playwright
+- TextBlob
+- Hugging Face Transformers
+- Pandas
+- BeautifulSoup
+- SpaCy
+- Redis
+- MongoDB Driver (PyMongo)
 
 ---
 
