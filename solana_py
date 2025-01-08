@@ -1,0 +1,74 @@
+from solana.rpc.api import Client
+from solana.publickey import PublicKey
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+# Initialize the Solana RPC client
+SOLANA_RPC_URL = "https://api.mainnet-beta.solana.com"  # Use the appropriate Solana cluster URL
+client = Client(SOLANA_RPC_URL)
+
+def get_account_balance(account_address: str):
+    """Fetch the SOL balance of a given account."""
+    try:
+        balance = client.get_balance(PublicKey(account_address))
+        return balance['result']['value'] / 1_000_000_000  # Convert lamports to SOL
+    except Exception as e:
+        logging.error(f"Error fetching account balance for {account_address}: {e}")
+        return None
+
+def get_recent_transactions(account_address: str, limit: int = 10):
+    """Fetch recent transactions for a given account."""
+    try:
+        response = client.get_signatures_for_address(PublicKey(account_address), limit=limit)
+        transactions = response['result']
+        return transactions
+    except Exception as e:
+        logging.error(f"Error fetching transactions for {account_address}: {e}")
+        return []
+
+def get_transaction_details(signature: str):
+    """Fetch details of a specific transaction."""
+    try:
+        response = client.get_transaction(signature)
+        return response['result']
+    except Exception as e:
+        logging.error(f"Error fetching transaction details for signature {signature}: {e}")
+        return None
+
+def get_token_accounts_by_owner(owner_address: str):
+    """Fetch SPL token accounts owned by a specific address."""
+    try:
+        response = client.get_token_accounts_by_owner(PublicKey(owner_address), {"programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"})
+        accounts = response['result']['value']
+        return accounts
+    except Exception as e:
+        logging.error(f"Error fetching token accounts for {owner_address}: {e}")
+        return []
+
+def main():
+    # Example account address
+    account_address = "EnterYourSolanaPublicKeyHere"
+
+    # Fetch account balance
+    balance = get_account_balance(account_address)
+    if balance is not None:
+        logging.info(f"Account balance for {account_address}: {balance} SOL")
+
+    # Fetch recent transactions
+    transactions = get_recent_transactions(account_address)
+    if transactions:
+        logging.info(f"Recent transactions for {account_address}:")
+        for tx in transactions:
+            logging.info(f"- Signature: {tx['signature']} | Slot: {tx['slot']} | Block Time: {tx.get('blockTime', 'N/A')}")
+
+    # Fetch SPL token accounts
+    token_accounts = get_token_accounts_by_owner(account_address)
+    if token_accounts:
+        logging.info(f"SPL Token accounts for {account_address}:")
+        for account in token_accounts:
+            logging.info(f"- Token Account: {account['pubkey']} | Token Balance: {account['account']['data']}")
+
+if __name__ == "__main__":
+    main()
